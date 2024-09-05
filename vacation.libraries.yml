@@ -1,0 +1,8 @@
+vacation:
+  css:
+    theme:
+      css/style.css: {}
+
+  js:
+    js/script.js: {}
+    js/workflow-buttons.js: {}

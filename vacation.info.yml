@@ -5,6 +5,9 @@ package: Core
 core_version_requirement: ^9 || ^10
 version: 1.0.0
 
+libraries:
+  - vacation/vacation
+
 regions:
   header: Header
   special_menu: Special menu
