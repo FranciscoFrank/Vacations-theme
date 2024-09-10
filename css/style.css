@@ -1,0 +1,15 @@
+.block-system-main-block .views-table {
+  width: 100%;
+}
+.block-system-main-block .views-table tbody tr .views-field p {
+  margin: 0 !important;
+}
+
+.block-field-blocknodevacation-requestfield-vacation-reason .field--name-field-vacation-reason {
+  font-family: "metropolis", sans-serif;
+  font-size: 16px;
+  line-height: var(--sp1-5);
+}
+.block-field-blocknodevacation-requestfield-vacation-reason .field--name-field-vacation-reason .field__item p {
+  padding: 0 15px;
+}

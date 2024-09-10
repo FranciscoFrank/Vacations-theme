@@ -1,1 +1,31 @@
 <?php
+function vacation_views_query_alter(ViewExecutable $view, QueryPluginBase $query)
+{
+  if ($view->name == 'requests_for_vacation_approval_vacation' && $view->current_display == 'block_1') {
+    $current_user_id = \Drupal::currentUser()->id();
+
+    $query->query['from'] = '
+      FROM node_field_data
+      LEFT JOIN content_moderation_state_field_revision content_moderation_state
+        ON node_field_data.vid = content_moderation_state.content_entity_revision_id
+        AND content_moderation_state.content_entity_type_id = \'node\'
+        AND content_moderation_state.content_entity_id = node_field_data.nid
+        AND content_moderation_state.langcode = node_field_data.langcode
+      LEFT JOIN node__field_vacations_approver
+        ON node_field_data.nid = node__field_vacations_approver.entity_id
+        AND node__field_vacations_approver.deleted = 0
+      LEFT JOIN node__field_invisible_approvers
+        ON node_field_data.nid = node__field_invisible_approvers.entity_id
+        AND node__field_invisible_approvers.deleted = 0
+    ';
+    $query->query['where'][] = 'node_field_data.type IN (\'vacation_request\')';
+    $query->query['where'][] = 'content_moderation_state.workflow = \'vacation_request_status\'';
+    $query->query['where'][] = 'content_moderation_state.moderation_state = \'draft\'';
+    $query->query['group'][] = 'node_field_data.nid';
+    $query->query['having'][] = 'SUM(CASE WHEN node__field_vacations_approver.field_vacations_approver_target_id = ' . $current_user_id . ' THEN 1 ELSE 0 END) > 0';
+    $query->query['having'][] = 'SUM(CASE WHEN node__field_invisible_approvers.field_invisible_approvers_target_id = ' . $current_user_id . ' THEN 1 ELSE 0 END) = 0';
+    $query->orderby['order'] = 'node_field_data.nid DESC';
+    $query->query['limit'] = 6;
+    $query->query['offset'] = 0;
+  }
+}
